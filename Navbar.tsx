@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Wallet, Copy, Check } from "lucide-react";
+import { Wallet, Copy, Check, CreditCard } from "lucide-react";
+import NetworkSelector, { Network } from "./src/components/NetworkSelector";
+import FiatOnRampModal from "./src/components/FiatOnRampModal";
 
 interface NavbarProps {
   address?: string;
@@ -13,6 +15,7 @@ interface NavbarProps {
 export default function Navbar({ address, onConnect }: NavbarProps) {
   const pathname = usePathname();
   const [copied, setCopied] = useState(false);
+  const [isFiatModalOpen, setIsFiatModalOpen] = useState(false);
 
   const copyToClipboard = async () => {
     if (address) {
@@ -30,6 +33,7 @@ export default function Navbar({ address, onConnect }: NavbarProps) {
     { name: "Dashboard", href: "/" },
     { name: "Swap", href: "/swap" },
     { name: "Pools", href: "/pools" },
+    { name: "Portfolio", href: "/portfolio" },
     { name: "FAQ", href: "/faq" },
   ];
 
@@ -60,33 +64,52 @@ export default function Navbar({ address, onConnect }: NavbarProps) {
         </nav>
       </div>
 
-      {address ? (
-        <div className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full transition">
-          <Wallet size={18} />
-          <span className="text-sm">
-            {`${address.slice(0, 6)}...${address.slice(-4)}`}
-          </span>
-          <button
-            onClick={copyToClipboard}
-            className="ml-2 p-1 hover:bg-blue-500 rounded-full transition-colors"
-            title="Copy address"
-          >
-            {copied ? (
-              <Check size={16} className="text-green-300" />
-            ) : (
-              <Copy size={16} className="text-white" />
-            )}
-          </button>
-        </div>
-      ) : (
+      <div className="flex items-center gap-4">
+        <NetworkSelector />
+        
+        {/* Buy Crypto Button */}
         <button
-          onClick={onConnect}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full transition"
+          onClick={() => setIsFiatModalOpen(true)}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 px-6 py-2 rounded-full transition"
         >
-          <Wallet size={18} />
-          Connect Wallet
+          <CreditCard size={18} />
+          Buy Crypto
         </button>
-      )}
+        
+        {address ? (
+          <div className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full transition">
+            <Wallet size={18} />
+            <span className="text-sm">
+              {`${address.slice(0, 6)}...${address.slice(-4)}`}
+            </span>
+            <button
+              onClick={copyToClipboard}
+              className="ml-2 p-1 hover:bg-blue-500 rounded-full transition-colors"
+              title="Copy address"
+            >
+              {copied ? (
+                <Check size={16} className="text-green-300" />
+              ) : (
+                <Copy size={16} className="text-white" />
+              )}
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={onConnect}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full transition"
+          >
+            <Wallet size={18} />
+            Connect Wallet
+          </button>
+        )}
+      </div>
+      
+      {/* Fiat On-Ramp Modal */}
+      <FiatOnRampModal
+        isOpen={isFiatModalOpen}
+        onClose={() => setIsFiatModalOpen(false)}
+      />
     </div>
   );
 }
