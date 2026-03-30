@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Plus, TrendingUp, DollarSign, Percent } from "lucide-react";
-import Navbar from "../../../Navbar";
+import Navbar from "../../components/Navbar";
 import { useWatchlist } from "../../hooks/useWatchlist";
 import StarIcon from "../../components/StarIcon";
 import TableSkeleton from "../../components/TableSkeleton";
